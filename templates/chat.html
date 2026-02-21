@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Transformer Based Science ChatBot</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    background:linear-gradient(120deg,#0f2027,#203a43,#2c5364);
+    color:white;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:260px;
+    background:#0b0f19;
+    padding:20px;
+    border-right:1px solid #1f2937;
+    display:flex;
+    flex-direction:column;
+}
+
+.sidebar h2{
+    color:#00f2ff;
+    margin-bottom:30px;
+}
+
+.sidebar button{
+    background:#111827;
+    border:none;
+    color:white;
+    padding:12px;
+    margin-bottom:12px;
+    border-radius:10px;
+    cursor:pointer;
+    text-align:left;
+}
+
+.sidebar button:hover{
+    background:#1f2937;
+}
+
+/* MAIN CHAT */
+
+.main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+/* HEADER */
+
+.header{
+    padding:18px;
+    text-align:center;
+    background:#121826;
+    font-size:20px;
+    font-weight:600;
+    color:#00f2ff;
+    border-bottom:1px solid #1f2937;
+}
+
+/* CHAT AREA */
+
+.chat-box{
+    flex:1;
+    overflow-y:auto;
+    padding:25px;
+}
+
+.message{
+    max-width:70%;
+    padding:14px;
+    margin-bottom:15px;
+    border-radius:14px;
+    line-height:1.6;
+}
+
+.user{
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    margin-left:auto;
+    border-bottom-right-radius:4px;
+}
+
+.bot{
+    background:#1f2937;
+    margin-right:auto;
+    border-bottom-left-radius:4px;
+}
+
+/* INPUT AREA */
+
+.input-area{
+    display:flex;
+    padding:15px;
+    background:#121826;
+    border-top:1px solid #1f2937;
+}
+
+.input-area input{
+    flex:1;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#0b0f19;
+    color:white;
+    font-size:15px;
+}
+
+.input-area button{
+    margin-left:10px;
+    padding:0 25px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#00f2ff,#00c6ff);
+    font-weight:600;
+    cursor:pointer;
+}
+
+::-webkit-scrollbar{
+    width:6px;
+}
+::-webkit-scrollbar-thumb{
+    background:#374151;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+    <h2>🔬 Science AI</h2>
+
+    <button>➕ New Chat</button>
+    <button>🧠 Physics</button>
+    <button>🧪 Chemistry</button>
+    <button>🌌 Space</button>
+    <button>🧬 Biology</button>
+
+    <hr style="margin:20px 0;border-color:#1f2937">
+
+    <button>⚙ Settings</button>
+</div>
+
+<!-- MAIN CHAT -->
+
+<div class="main">
+
+    <div class="header">
+        Transformer Based Science ChatBot
+    </div>
+
+    <div class="chat-box" id="chat"></div>
+
+    <div class="input-area">
+        <input type="text" id="msg" placeholder="Ask any science question..."
+        onkeydown="if(event.key==='Enter') sendMsg()">
+
+        <button onclick="sendMsg()">Send</button>
+    </div>
+
+</div>
+
+<script>
+function sendMsg(){
+    let input=document.getElementById("msg");
+    let message=input.value.trim();
+    if(!message) return;
+
+    let chat=document.getElementById("chat");
+
+    chat.innerHTML+=`<div class="message user">${message}</div>`;
+    input.value="";
+    chat.scrollTop=chat.scrollHeight;
+
+    fetch("/chat",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded"
+        },
+        body:"message="+encodeURIComponent(message)
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        chat.innerHTML+=`<div class="message bot">${data.reply}</div>`;
+        chat.scrollTop=chat.scrollHeight;
+    });
+}
+</script>
+
+</body>
+</html>
